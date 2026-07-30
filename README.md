@@ -194,6 +194,30 @@ python tools/make_usdz.py \
   （`integrate.api.nvidia.com/v1/models` の一覧には出ないので「使えない」と誤認しやすい）
 - 画像サイズは **768〜1344** のみ（512 は 422 エラー）
 
+### レンダリングが暗すぎる
+
+既定のままだと出力が全体に暗く、特に濃色の材質（革・ウォールナット等）はほぼ黒く潰れる。
+原因はドームライト（ovrtx 同梱の StinsonBeach HDRI）の強度で、**OVRTX レンダーサービスを
+起動する側の環境変数**で調整する:
+
+```bash
+export WU_OVRTX_DEFAULT_HDRI_INTENSITY=3000   # 既定 600
+```
+
+同梱の `scripts/start_ovrtx.sh` はこの値を設定済みのレンダーサービス起動スクリプト
+（Xvfb の用意も含む）。
+
+```bash
+./scripts/start_ovrtx.sh          # 既定 port 8011 / DISPLAY :100
+```
+
+手元の計測では、野球グローブの被写体平均輝度が **23 → 63（約2.7倍）** になり、
+後処理での明るさ補正が不要になった。config 側のパラメータではないので、
+**レンダーサービスの再起動が必要**な点に注意。
+
+> なお起動スクリプトを `sh`（dash）+ `set -u` で書くと、`.venv/bin/activate` が
+> `OSTYPE` 未定義で落ちる。bash で実行し、activate の前後だけ `set +u` / `set -u` する。
+
 ### 上流の要修正点（2件）
 
 本ツールでは対応できない、content-agents 本体側の問題。手元では以下のパッチをあてて動かした。
