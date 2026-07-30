@@ -1,0 +1,114 @@
+# 非工業マテリアル追加レシピ (OpenPBR interface inputs / 色はリニア空間)
+# 使い方: tools/add_materials.py がこれを読み、既存primを複製して inputs を差し替える。
+# 値の目安: base_metalness 0=非金属/1=金属, specular_roughness 0=鏡面〜1=完全マット,
+#           transmission_weight 1=透明(ガラス), specular_weight で反射の強さ, coat_weight で艶(クリア層)。
+
+templates:
+  metal: Stainless_Steel
+  dielectric: Plastic_Red
+  glass: Glass_Clear
+
+materials:
+  # ===== 木材系 =====
+  - name: "Wood Oak"
+    description: "Warm medium-brown natural oak wood with a soft matte finish and visible straight grain"
+    template: dielectric
+    inputs: {base_color: [0.26, 0.14, 0.06], base_metalness: 0.0, specular_roughness: 0.5, specular_weight: 0.5, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Wood Walnut"
+    description: "Rich dark chocolate-brown walnut hardwood, semi-matte with fine grain"
+    template: dielectric
+    inputs: {base_color: [0.20, 0.10, 0.05], base_metalness: 0.0, specular_roughness: 0.45, specular_weight: 0.5, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Wood Pine"
+    description: "Light pale-yellow pine wood, matte with a natural knotty grain"
+    template: dielectric
+    inputs: {base_color: [0.42, 0.28, 0.13], base_metalness: 0.0, specular_roughness: 0.55, specular_weight: 0.4, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Wood Mahogany"
+    description: "Deep reddish-brown mahogany wood with a warm satin sheen"
+    template: dielectric
+    inputs: {base_color: [0.32, 0.11, 0.06], base_metalness: 0.0, specular_roughness: 0.4, specular_weight: 0.6, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Bamboo"
+    description: "Pale golden bamboo, smooth and matte with subtle fibrous grain"
+    template: dielectric
+    inputs: {base_color: [0.5, 0.4, 0.18], base_metalness: 0.0, specular_roughness: 0.5, specular_weight: 0.4, transmission_weight: 0.0, subsurface_weight: 0.0}
+
+  # ===== 布・革系 =====
+  - name: "Fabric Cotton White"
+    description: "Soft off-white woven cotton cloth, very matte with a slight fuzzy texture"
+    template: dielectric
+    inputs: {base_color: [0.72, 0.72, 0.68], base_metalness: 0.0, specular_roughness: 0.9, specular_weight: 0.25, fuzz_weight: 0.4, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Fabric Denim Blue"
+    description: "Indigo blue denim fabric, matte woven cloth with a soft fuzzy surface"
+    template: dielectric
+    inputs: {base_color: [0.09, 0.14, 0.26], base_metalness: 0.0, specular_roughness: 0.9, specular_weight: 0.2, fuzz_weight: 0.3, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Fabric Red"
+    description: "Deep red woven textile, matte cloth with soft diffuse light and slight fuzz"
+    template: dielectric
+    inputs: {base_color: [0.32, 0.04, 0.05], base_metalness: 0.0, specular_roughness: 0.9, specular_weight: 0.25, fuzz_weight: 0.35, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Felt Gray"
+    description: "Medium-gray felt, extremely matte with a dense fuzzy fibrous surface"
+    template: dielectric
+    inputs: {base_color: [0.28, 0.28, 0.28], base_metalness: 0.0, specular_roughness: 0.95, specular_weight: 0.15, fuzz_weight: 0.6, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Leather Brown"
+    description: "Rich brown genuine leather with a soft satin sheen and subtle grain"
+    template: dielectric
+    inputs: {base_color: [0.42, 0.20, 0.09], base_metalness: 0.0, specular_roughness: 0.55, specular_weight: 0.5, coat_weight: 0.15, coat_roughness: 0.4, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Leather Black"
+    description: "Black leather with a low satin sheen and fine pebbled grain"
+    template: dielectric
+    inputs: {base_color: [0.015, 0.015, 0.015], base_metalness: 0.0, specular_roughness: 0.5, specular_weight: 0.5, coat_weight: 0.15, coat_roughness: 0.4, transmission_weight: 0.0, subsurface_weight: 0.0}
+
+  # ===== セラミック・石・コンクリート系 =====
+  - name: "Ceramic White Glazed"
+    description: "Glossy glazed white ceramic with a smooth reflective porcelain-like surface"
+    template: dielectric
+    inputs: {base_color: [0.85, 0.85, 0.82], base_metalness: 0.0, specular_roughness: 0.12, specular_weight: 1.0, coat_weight: 0.3, coat_roughness: 0.05, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Terracotta"
+    description: "Earthy orange-brown unglazed terracotta clay, matte and slightly porous"
+    template: dielectric
+    inputs: {base_color: [0.42, 0.16, 0.09], base_metalness: 0.0, specular_roughness: 0.6, specular_weight: 0.4, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Marble White"
+    description: "Polished white marble with faint gray veining and soft translucent depth"
+    template: dielectric
+    inputs: {base_color: [0.78, 0.78, 0.75], base_metalness: 0.0, specular_roughness: 0.2, specular_weight: 1.0, subsurface_weight: 0.15, subsurface_color: [0.85, 0.85, 0.82], transmission_weight: 0.0}
+  - name: "Granite Dark"
+    description: "Dark speckled gray granite stone with a semi-polished mineral surface"
+    template: dielectric
+    inputs: {base_color: [0.16, 0.16, 0.18], base_metalness: 0.0, specular_roughness: 0.45, specular_weight: 0.6, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Concrete Gray"
+    description: "Plain medium-gray concrete, very matte with a rough porous surface"
+    template: dielectric
+    inputs: {base_color: [0.34, 0.34, 0.34], base_metalness: 0.0, specular_roughness: 0.85, specular_weight: 0.2, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Porcelain"
+    description: "Pure white porcelain with a smooth glossy glazed finish"
+    template: dielectric
+    inputs: {base_color: [0.9, 0.9, 0.9], base_metalness: 0.0, specular_roughness: 0.1, specular_weight: 1.0, coat_weight: 0.4, coat_roughness: 0.03, transmission_weight: 0.0, subsurface_weight: 0.05}
+
+  # ===== マット塗装・紙・木炭など日用 =====
+  - name: "Paint Matte White"
+    description: "Flat matte white painted surface with no gloss"
+    template: dielectric
+    inputs: {base_color: [0.8, 0.8, 0.8], base_metalness: 0.0, specular_roughness: 0.7, specular_weight: 0.3, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Paint Matte Black"
+    description: "Flat matte black painted surface with no gloss"
+    template: dielectric
+    inputs: {base_color: [0.02, 0.02, 0.02], base_metalness: 0.0, specular_roughness: 0.7, specular_weight: 0.3, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Paint Matte Blue"
+    description: "Flat matte medium-blue painted surface with no gloss"
+    template: dielectric
+    inputs: {base_color: [0.06, 0.12, 0.35], base_metalness: 0.0, specular_roughness: 0.7, specular_weight: 0.3, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Paint Matte Green"
+    description: "Flat matte olive-green painted surface with no gloss"
+    template: dielectric
+    inputs: {base_color: [0.08, 0.22, 0.07], base_metalness: 0.0, specular_roughness: 0.7, specular_weight: 0.3, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Paper White"
+    description: "Plain white matte paper, soft and non-reflective"
+    template: dielectric
+    inputs: {base_color: [0.82, 0.82, 0.8], base_metalness: 0.0, specular_roughness: 0.85, specular_weight: 0.15, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Cardboard"
+    description: "Light tan corrugated cardboard, matte with a fibrous paper surface"
+    template: dielectric
+    inputs: {base_color: [0.38, 0.26, 0.13], base_metalness: 0.0, specular_roughness: 0.9, specular_weight: 0.15, transmission_weight: 0.0, subsurface_weight: 0.0}
+  - name: "Charcoal"
+    description: "Deep matte black charcoal, extremely non-reflective and slightly rough"
+    template: dielectric
+    inputs: {base_color: [0.025, 0.025, 0.025], base_metalness: 0.0, specular_roughness: 0.9, specular_weight: 0.1, transmission_weight: 0.0, subsurface_weight: 0.0}

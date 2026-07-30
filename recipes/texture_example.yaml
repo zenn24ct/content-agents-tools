@@ -1,0 +1,52 @@
+# texture-agent 用サンプル設定
+#
+# material-agent の出力（材質割当済み USD）に、AI生成テクスチャを貼る。
+#   texture-agent run recipes/texture_example.yaml -v
+#
+# usd_path と material_textures を自分のアセットに合わせて書き換えて使う。
+
+project:
+  name: "my_texture"
+  session_id: "my_texture"
+  description: "AI-generated textures on a materialized USD"
+
+input:
+  # material-agent の出力 output.usd を絶対パスで指定する
+  usd_path: "/path/to/content-agents/apps/material_agent/configs/.<session>/output/output.usd"
+
+texture:
+  backend: "simple_image_gen"
+
+  # 重要: Apple Quick Look 等のアセットは元の UV が弾かれることがある
+  # (UV_BAD_INTERPOLATION)。その場合は force_projection にする。
+  # 有効値: validate / preserve_or_fix / generate_missing / force_projection
+  uv_policy: "force_projection"
+  uv_projection: "box"
+  uv_normalize_out_of_range: false
+
+  image_gen:
+    backend: nim
+    model: black-forest-labs/flux_2-klein-4b
+  size: 1024
+  workers: 4
+
+# テクスチャを貼りたい材質だけを列挙する（ここに無い材質はそのまま）。
+# キーは USD 内の Material prim 名（例: Wood_Walnut）。
+material_textures:
+  Wood_Walnut:
+    prompt: "seamless tileable walnut wood grain, fine straight dark-brown grain, matte natural finish, top-down flat lay, photorealistic"
+    opacity: 1.0
+
+auto_prompt:
+  enabled: false
+
+variations:
+  count: 1
+
+steps:
+  discover_materials: {enabled: true}
+  render_previews: {enabled: false}
+  generate_textures: {enabled: true, max_workers: 2, skip_existing: true}
+  blend_textures: {enabled: true, default_opacity: 0.9, output_size: 1024}
+  apply_textures: {enabled: true}
+  render: {enabled: true, backend: "remote", image_width: 1024, image_height: 1024}
