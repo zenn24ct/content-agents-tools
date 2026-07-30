@@ -17,6 +17,7 @@ Content Agents は 3D モデル(USD)に **VLM が材質を自動で割り当て*
 | `newasset.sh` | 新しいアセットを **1コマンド** でパイプライン投入（下記4つを自動化） |
 | `tools/asset_prep.py` | UsdSkel(スケルタルアニメ)の**自動検出＋静的メッシュ化**、config の自動生成 |
 | `tools/add_materials.py` | 材質ライブラリの**拡張**（レシピYAMLから新材質を量産） |
+| `tools/make_usdz.py` | パイプライン出力を**単体で開ける .usdz に梱包**（Quick Look / Blender 等で閲覧） |
 | `recipes/` | 材質レシピと texture-agent 用の設定サンプル |
 
 ### 解決している主な問題
@@ -24,6 +25,8 @@ Content Agents は 3D モデル(USD)に **VLM が材質を自動で割り当て*
 - **OVRTX が UsdSkel で落ちる** … スキニングを frame 0 で焼き込み、静的メッシュ化して回避（自動判定）
 - **config 作成が毎回手作業** … 雛形をコピーしてパスを絶対パスで差し替える作業を自動化
 - **標準の材質ライブラリが工業材質のみ**（金属/プラ/ガラス/塗装の74種）… 木材・布・革・陶器などを追加できる
+- **出力 USD が単体で開けない** … `output.usd` は元アセットを参照する薄いレイヤなので、
+  そのままでは他環境で開けない。フラット化＋依存同梱で 1 ファイルの `.usdz` にする
 
 ---
 
@@ -35,13 +38,18 @@ git clone https://github.com/NVIDIA-Omniverse/content-agents.git
 cd content-agents
 # 本体の README に従って uv 等でセットアップし、.env に API キーを設定
 
-# 2. 本ツールを配置
-git clone https://github.com/<your-account>/content-agents-tools.git /tmp/ca-tools
-cp /tmp/ca-tools/newasset.sh .
-cp /tmp/ca-tools/tools/*.py tools/
-mkdir -p materials_custom && cp /tmp/ca-tools/recipes/recipe_starter.yaml materials_custom/
-chmod +x newasset.sh tools/*.py
+# 2. 本ツールを clone して シンボリックリンクで配置
+git clone https://github.com/<your-account>/content-agents-tools.git ~/content-agents-tools
+
+ln -sf ~/content-agents-tools/newasset.sh .
+mkdir -p tools materials_custom
+ln -sf ~/content-agents-tools/tools/*.py tools/
+ln -sf ~/content-agents-tools/recipes/recipe_starter.yaml materials_custom/
 ```
+
+> **コピーではなくリンクにする理由**: ツールを直したときに「動かしている実体」と
+> 「リポジトリの中身」がズレない。修正は `~/content-agents-tools` 側で行い、
+> そのまま `git commit` / `git push` できる。
 
 `newasset.sh` は本体の `run.sh`（バックエンド切替ラッパー）を呼ぶ。無い場合は下記を用意する:
 
@@ -143,6 +151,30 @@ materials:
 # recipes/texture_example.yaml を編集して実行
 texture-agent run recipes/texture_example.yaml -v
 ```
+
+> **効きやすいアセット / 効きにくいアセット**
+> パーツが多数のメッシュに分かれたアセット（例: ギター）は、パーツごとに UV が張られるため
+> 生成テクスチャがよく乗る。一方、**全体が 1 メッシュのアセット**（例: 野球グローブ）は
+> 箱投影 UV が 1 枚貼られるだけになり、模様がほぼ見えないことがある
+> （`uv_scale_factor` を上げても改善しなかった）。元アセットの UV が整っているかが効き目を左右する。
+
+### 4. 出力を単体で開ける .usdz にする
+
+パイプラインの `output.usd` は元アセットを参照する薄いレイヤなので、そのファイル単体では他環境で開けない。
+フラット化して依存を同梱した `.usdz` を作る:
+
+```bash
+python tools/make_usdz.py \
+  apps/material_agent/configs/.<session>/output/output.usd \
+  usdz_out/<name>.usdz \
+  --source-usdz assets_custom/<name>/<original>.usdz \
+  --arkit
+```
+
+- `--source-usdz` … 元アセットが `.usdz` だった場合は**必須**。
+  中のテクスチャが `@0/foo.png@` というアーカイブ内パスで参照されており、
+  展開しないと解決できず梱包に失敗する
+- `--arkit` … macOS/iOS のクイックルックで開ける形式にする
 
 ---
 
